@@ -1,0 +1,18 @@
+[service]
+URL_prefix = "https://example.com/"
+max_upload_size = 10000000
+double_dot_extensions = ["tar.gz", "tar.bz", "tar.bz2", "tar.xz", "user.js"]
+filename_length = 6
+generate_name_retries = 5
+
+[server]
+port = 16421
+max_memory_use = 10000000
+
+[paths]
+database = "/var/www/html/database.sqlite3"
+placeholder_dir = "/var/www/html/files"
+
+[aws]
+region = "your-aws-region"
+bucket = "your-bucket"
