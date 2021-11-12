@@ -186,7 +186,7 @@ func handleFile(fileHeader *multipart.FileHeader) (*fileResult, error) {
 	}
 
 	//Create a placeholder file so nginx can check whether a file exists without using S3
-	outfile, err := os.OpenFile(viper.GetString("paths.placeholder_dir")+"/"+newName, os.O_WRONLY|os.O_CREATE, 0644)
+	outfile, err := os.OpenFile(viper.GetString("paths.placeholder_dir")+newName, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, errors.New("could not create placeholder file")
 	}
