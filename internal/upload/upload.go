@@ -202,8 +202,8 @@ func handleFile(fileHeader *multipart.FileHeader) (*fileResult, error) {
 }
 
 func upload(w http.ResponseWriter, req *http.Request) {
-	//TODO configure headers (content type, accept encoding, compression,...)
 	if req.Method == "POST" {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		req.Body = http.MaxBytesReader(w, req.Body, viper.GetInt64("service.max_upload_size"))
 		err := req.ParseMultipartForm(viper.GetInt64("server.max_memory_use"))
 		if err != nil {
