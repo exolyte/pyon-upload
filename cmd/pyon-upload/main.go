@@ -61,9 +61,47 @@ func getAWSStorageClient() *s3.S3 {
 	return s3.New(session)
 }
 
+func createDatabase(path string) error {
+	_, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	db, err := sql.Open("sqlite3", viper.GetString("paths.database"))
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`CREATE TABLE "files" (
+		"hash"	TEXT NOT NULL UNIQUE,
+		"originalName"	TEXT NOT NULL,
+		"fileName"	TEXT NOT NULL UNIQUE,
+		"size"	NUMERIC NOT NULL,
+		"date"	NUMERIC NOT NULL
+		)`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`CREATE INDEX "hashidx" ON "files" ("hash")`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`CREATE INDEX "nameidx" ON "files" ("fileName")`)
+	if err != nil {
+		return err
+	}
+	db.Close()
+	return nil
+}
+
 func main() {
 	//TODO configure https
 	getConfig()
+	_, err := os.Stat(viper.GetString("paths.database"))
+	if err != nil {
+		err = createDatabase(viper.GetString("paths.database"))
+		if err != nil {
+			panic(fmt.Errorf("couldn't create db: %w", err))
+		}
+	}
 	db, err := sql.Open("sqlite3", viper.GetString("paths.database"))
 	if err != nil {
 		panic(fmt.Errorf("couldn't open db: %w", err))
