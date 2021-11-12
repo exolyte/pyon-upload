@@ -10,7 +10,8 @@ port = 16421
 max_memory_use = 10000000
 
 [paths]
-database = "/var/www/html/database.sqlite3"
+database_path = "/var/www/html/"
+database_filename = "database.sqlite3"
 placeholder_dir = "/var/www/html/files"
 
 [aws]

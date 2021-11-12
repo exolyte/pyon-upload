@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -28,12 +29,26 @@ func getConfig() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
-	if !viper.IsSet("server.port") {
-		panic(fmt.Errorf("port was not set"))
+	requiredKeys := []string{"service.URL_prefix", "service.max_upload_size", "service.double_dot_extensions",
+		"service.filename_length", "service.generate_name_retries", "server.port", "server.max_memory_use",
+		"paths.database_path", "paths.database_filename", "paths.placeholder_dir", "aws.region", "aws.bucket"}
+	for _, key := range requiredKeys {
+		if !viper.IsSet(key) {
+			panic(fmt.Errorf("required key %s is not set in the conf file", key))
+		}
 	}
 	if !viper.IsSet("aws.id") || !viper.IsSet("aws.key") {
 		panic(fmt.Errorf("PYON_AWS_ACCESS_ID or PYON_AWS_ACCESS_KEY environment variables were not set"))
 	}
+	_, err = os.Stat(viper.GetString("paths.database_path"))
+	if err != nil {
+		panic(fmt.Errorf("the database directory does not exist or is not accessible"))
+	}
+	_, err = os.Stat(viper.GetString("paths.placeholder_dir"))
+	if err != nil {
+		panic(fmt.Errorf("the file placeholder directory does not exist or is not accessible"))
+	}
+	viper.Set("paths.database", viper.GetString("paths.database_dir")+viper.GetString("paths.database_filename"))
 }
 
 func getAWSStorageClient() *s3.S3 {
