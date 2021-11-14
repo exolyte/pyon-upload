@@ -8,6 +8,8 @@ generate_name_retries = 5
 [server]
 port = 16421
 max_memory_use = 10000000
+ssl_certificate = "/etc/ssl/certs/fullchain.pem"
+ssl_key = "/etc/ssl/private/privkey.pem"
 
 [paths]
 database_path = "/var/www/html/"

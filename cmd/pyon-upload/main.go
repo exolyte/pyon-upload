@@ -31,7 +31,8 @@ func getConfig() {
 	}
 	requiredKeys := []string{"service.URL_prefix", "service.max_upload_size", "service.double_dot_extensions",
 		"service.filename_length", "service.generate_name_retries", "server.port", "server.max_memory_use",
-		"paths.database_path", "paths.database_filename", "paths.placeholder_dir", "aws.region", "aws.bucket"}
+		"paths.database_path", "paths.database_filename", "paths.placeholder_dir", "aws.region", "aws.bucket",
+		"server.ssl_certificate", "server.ssl_key"}
 	for _, key := range requiredKeys {
 		if !viper.IsSet(key) {
 			panic(fmt.Errorf("required key %s is not set in the conf file", key))
@@ -93,7 +94,6 @@ func createDatabase(path string) error {
 }
 
 func main() {
-	//TODO configure https
 	getConfig()
 	_, err := os.Stat(viper.GetString("paths.database"))
 	if err != nil {
@@ -109,5 +109,11 @@ func main() {
 	db.SetMaxOpenConns(1)
 
 	upload.Setup(db, getAWSStorageClient())
-	http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), nil)
+	err = http.ListenAndServeTLS(":"+viper.GetString("server.port"),
+		viper.GetString("server.ssl_certificate"),
+		viper.GetString("server.ssl_key"),
+		nil)
+	if err != nil {
+		panic(fmt.Errorf("couldn't start server"))
+	}
 }
