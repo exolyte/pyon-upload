@@ -15,12 +15,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configLocation string = "/etc/pyon-upload/config"
+var configLocation string = "/etc/pyon-upload/pyon-upload.conf"
 
 func getConfig() {
-	viper.SetConfigName("conf")
+	viper.SetConfigFile(configLocation)
 	viper.SetConfigType("toml")
-	viper.AddConfigPath(configLocation)
 
 	viper.BindEnv("aws.id", "PYON_AWS_ACCESS_ID")
 	viper.BindEnv("aws.key", "PYON_AWS_ACCESS_KEY")
