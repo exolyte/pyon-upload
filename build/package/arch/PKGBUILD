@@ -1,0 +1,36 @@
+pkgname=pyon-upload
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Lightweight web server for uploading files written in Go, compatible with Pomf frontend using AWS S3 as a storage backend.'
+arch=('x86_64')
+url='https://github.com/exolyte/pyon-upload'
+license=('MIT')
+makedepends=(go)
+backup=('etc/pyon-upload/pyon-upload.conf')
+source=(https://github.com/exolyte/pyon-upload/archive/refs/tags/v$pkgver.tar.gz)
+sha256sums=('a1e2be10f994f4038e5aecf1a2bf53fb1e8d5d08ff4fc6847b7134c0b0809414')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  mkdir build
+  mkdir build/package
+  cp ../../../service build/package
+  go mod tidy
+  go build cmd/pyon-upload/main.go
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  install -d "$pkgdir"/usr/bin
+  mv main "$pkgdir"/usr/bin/pyon-upload
+  chmod 755 "$pkgdir"/usr/bin/pyon-upload
+
+  install -dm755 "$pkgdir"/etc/pyon-upload
+  mv config/conf "$pkgdir"/etc/pyon-upload/pyon-upload.conf
+  chmod 644 "$pkgdir"/etc/pyon-upload/pyon-upload.conf
+
+  install -dm755  "$pkgdir"/usr/lib/systemd/system
+  mv build/package/service "$pkgdir"/usr/lib/systemd/system/pyon-upload.service
+  chmod 644 "$pkgdir"/usr/lib/systemd/system/pyon-upload.service
+}

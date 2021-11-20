@@ -1,0 +1,10 @@
+[Unit]
+Description=Lightweight web server for uploading files written in Go, compatible with Pomf frontend using AWS S3 as a storage backend.
+After=network.target network-online.target nss-lookup.target
+
+[Service]
+ExecStart=/usr/bin/pyon-upload
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
