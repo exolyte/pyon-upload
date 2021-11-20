@@ -1,21 +1,33 @@
 [service]
+# URL that should be prepended to the filename.
 URL_prefix = "https://example.com/"
+# The maximum file size that can be uploaded in bytes.
 max_upload_size = 10000000
+# File extensions with multiple dots that should be preserved.
 double_dot_extensions = ["tar.gz", "tar.bz", "tar.bz2", "tar.xz", "user.js"]
+# Length of the new filenames.
 filename_length = 6
+# Amount of retries to find a new filename.
 generate_name_retries = 5
 
 [server]
+# The port to run pyon-upload on.
 port = 16421
+# The maximum amount of memory that should be used per request. Setting this
+# to a higher value will increase performance at the cost of memory usage.
 max_memory_use = 10000000
+# Location of the SSL certificate and key.
 ssl_certificate = "/etc/ssl/certs/fullchain.pem"
 ssl_key = "/etc/ssl/private/privkey.pem"
 
 [paths]
+# Path and filename of the database file. The path should already exist.
 database_path = "/var/www/html/"
 database_filename = "database.sqlite3"
+# Path where placeholder files should be put. The path should already exist.
 placeholder_dir = "/var/www/html/files/"
 
 [aws]
+# Region and bucket name of the AWS S3 bucket.
 region = "your-aws-region"
 bucket = "your-bucket"
